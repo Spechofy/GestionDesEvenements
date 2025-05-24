@@ -59,4 +59,7 @@ public class GestionUtilisateurController {
         serviceUtilisateur.supprimerUtilisateur(id);
         return ResponseEntity.noContent().build();
     }
+
+
+
 }

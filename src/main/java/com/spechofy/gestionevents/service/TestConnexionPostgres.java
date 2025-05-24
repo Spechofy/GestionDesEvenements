@@ -1,4 +1,4 @@
-package com.spechofy.gestionevents;
+package com.spechofy.gestionevents.service;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,12 +14,12 @@ public class TestConnexionPostgres {
 
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
             if (conn != null) {
-                System.out.println("✅ Connexion réussie à PostgreSQL !");
+                System.out.println("Connexion réussie à PostgreSQL !");
             } else {
-                System.out.println("❌ Échec de connexion !");
+                System.out.println(" Échec de connexion !");
             }
         } catch (SQLException e) {
-            System.out.println("❌ Erreur de connexion : " + e.getMessage());
+            System.out.println("Erreur de connexion : " + e.getMessage());
         }
     }
 }

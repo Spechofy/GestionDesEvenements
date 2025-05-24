@@ -1,5 +1,6 @@
 package com.spechofy.gestionevents.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -39,6 +40,6 @@ public class Utilisateur {
             joinColumns = @JoinColumn(name = "utilisateur_id"),
             inverseJoinColumns = @JoinColumn(name = "evenement_id")
     )
-    @JsonIgnore
+    @JsonBackReference
     private List<Evenement> evenementsParticipes = new ArrayList<>();
 }
