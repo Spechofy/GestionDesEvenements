@@ -209,6 +209,6 @@ public class GestionEvenementController {
     @PostMapping(path = "/simuler-participation", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> ParticipationUtilisateur(@RequestBody UtilisateurParticipeEvenement evenement) {
         serviceKafka.envoyerEvenementUtilisateurParticipe(evenement);
-        return ResponseEntity.ok("📨 Kafka avec succès : " + evenement);
+        return ResponseEntity.ok(" push sur kafka : " + evenement);
     }
 }
