@@ -18,6 +18,9 @@ public class GestionUtilisateurService {
         this.repoUtilisateur = repoUtilisateur;
     }
 
+    public Utilisateur sauvegarderUtilisateur(Utilisateur utilisateur) {
+        return repoUtilisateur.save(utilisateur);
+    }
     public List<Utilisateur> obtenirTousUtilisateurs() {
         return repoUtilisateur.findAll();
     }
@@ -46,3 +49,4 @@ public class GestionUtilisateurService {
         repoUtilisateur.deleteById(id);
     }
 }
+

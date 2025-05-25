@@ -24,7 +24,6 @@ public class TokenAuthFilter extends OncePerRequestFilter {
         this.tokenUtils = tokenUtils;
         this.userDetailsService = userDetailsService;
     }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,

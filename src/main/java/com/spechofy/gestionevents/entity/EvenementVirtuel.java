@@ -11,5 +11,6 @@ import lombok.*;
 @AllArgsConstructor
 @DiscriminatorValue("VIRTUEL")
 public class EvenementVirtuel extends Evenement {
+
     private String lienReunion;
 }

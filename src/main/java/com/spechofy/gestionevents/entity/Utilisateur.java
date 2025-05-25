@@ -2,21 +2,23 @@ package com.spechofy.gestionevents.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "utilisateurs")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Table(name = "utilisateurs")
 public class Utilisateur {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long identifiant;
@@ -24,15 +26,12 @@ public class Utilisateur {
     private String nomUtilisateur;
     private String courriel;
 
-    @JsonProperty("motDePasse")
+    @Column(nullable = false)
+    @JsonIgnore
     private String motDePasse;
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    @OneToMany(mappedBy = "createur", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Evenement> evenementsCrees = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(

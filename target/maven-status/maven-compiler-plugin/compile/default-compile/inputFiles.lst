@@ -3,7 +3,6 @@ C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestioneven
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\dto\EvenementDTO.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\service\GestionUtilisateurService.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\controller\GestionUtilisateurController.java
-C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\entity\TypeEvenement.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\GestionEvenementsApplication.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\entity\Evenement.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\service\GestionEvenementService.java
@@ -12,16 +11,15 @@ C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestioneven
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\dto\UtilisateurDTO.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\entity\EvenementLocal.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\entity\EvenementVirtuel.java
-C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\service\TestConnexionPostgres.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\config\TokenUtils.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\dto\UtilisateurParticipeEvenement.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\repository\UtilisateurRepository.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\service\UserDetailsServiceImpl.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\config\TokenAuthFilter.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\service\ServiceGeolocalisation.java
+C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\service\WebClientConfig.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\config\SecurityConfig.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\controller\GestionEvenementController.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\repository\EvenementVirtuelRepository.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\entity\Utilisateur.java
 C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\repository\EvenementLocalRepository.java
-C:\Users\lenovo\Desktop\GestionEvenements\src\main\java\com\spechofy\gestionevents\config\WebConfig.java

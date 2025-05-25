@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/evenements/simuler-participation").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/evenements/locaux").permitAll()
                         .requestMatchers("/api/evenements/**").permitAll()
+
                         .requestMatchers(new AntPathRequestMatcher("/api/evenements/*/participer", "POST")).hasRole("UTILISATEUR")
                         .requestMatchers(new AntPathRequestMatcher("/api/evenements/*/quitter", "POST")).hasRole("UTILISATEUR")
                         .requestMatchers(HttpMethod.POST, "/api/evenements/**/participer").hasRole("UTILISATEUR")

@@ -15,81 +15,96 @@ import java.util.Optional;
 @Service
 public class GestionEvenementService {
 
-    private final EvenementLocalRepository repoEvenementLocal;
-    private final EvenementVirtuelRepository repoEvenementVirtuel;
-    private final UtilisateurRepository repoUtilisateur;
+    private final EvenementLocalRepository evenementLocalRepository;
+    private final EvenementVirtuelRepository evenementVirtuelRepository;
+    private final UtilisateurRepository utilisateurRepository;
 
     @Autowired
-    public GestionEvenementService(EvenementLocalRepository repoEvenementLocal,
-                                   EvenementVirtuelRepository repoEvenementVirtuel,
-                                   UtilisateurRepository repoUtilisateur) {
-        this.repoEvenementLocal = repoEvenementLocal;
-        this.repoEvenementVirtuel = repoEvenementVirtuel;
-        this.repoUtilisateur = repoUtilisateur;
+    public GestionEvenementService(EvenementLocalRepository evenementLocalRepository,
+                                   EvenementVirtuelRepository evenementVirtuelRepository,
+                                   UtilisateurRepository utilisateurRepository) {
+        this.evenementLocalRepository = evenementLocalRepository;
+        this.evenementVirtuelRepository = evenementVirtuelRepository;
+        this.utilisateurRepository = utilisateurRepository;
     }
 
     public List<EvenementLocal> obtenirTousEvenementsLocaux() {
-        return repoEvenementLocal.findAll();
-    }
-
-    public List<EvenementVirtuel> obtenirTousEvenementsVirtuels() {
-        return repoEvenementVirtuel.findAll();
-    }
-
-    public Optional<EvenementLocal> obtenirEvenementLocalParId(Long id) {
-        return repoEvenementLocal.findById(id);
-    }
-
-    public Optional<EvenementVirtuel> obtenirEvenementVirtuelParId(Long id) {
-        return repoEvenementVirtuel.findById(id);
+        return evenementLocalRepository.findAll();
     }
 
     public EvenementLocal creerEvenementLocal(EvenementLocal evenement) {
-        return repoEvenementLocal.save(evenement);
-    }
-
-    public EvenementVirtuel creerEvenementVirtuel(EvenementVirtuel evenement) {
-        return repoEvenementVirtuel.save(evenement);
+        return evenementLocalRepository.save(evenement);
     }
 
     public EvenementLocal modifierEvenementLocal(Long id, EvenementLocal details) {
-        return repoEvenementLocal.findById(id)
-                .map(evenement -> {
-                    evenement.avecDetailsMisAJour(details);
-                    return repoEvenementLocal.save(evenement);
-                })
-                .orElseThrow(() -> new RuntimeException("Événement local non trouvé"));
+        Optional<EvenementLocal> existingEvent = evenementLocalRepository.findById(id);
+        if (existingEvent.isPresent()) {
+            EvenementLocal evenement = existingEvent.get();
+            evenement.avecDetailsMisAJour(details);
+            return evenementLocalRepository.save(evenement);
+        }
+        throw new RuntimeException("Événement introuvable");
     }
 
     public void supprimerEvenementLocal(Long id) {
-        repoEvenementLocal.deleteById(id);
+        evenementLocalRepository.deleteById(id);
+    }
+
+    public Optional<EvenementLocal> obtenirEvenementLocalParId(Long id) {
+        return evenementLocalRepository.findById(id);
+    }
+
+    public List<Utilisateur> obtenirParticipantsEvenementLocal(Long eventId) {
+        Optional<EvenementLocal> eventOpt = evenementLocalRepository.findById(eventId);
+        if (eventOpt.isPresent()) {
+            return eventOpt.get().getParticipants();
+        }
+        throw new RuntimeException("Événement non trouvé");
+    }
+
+    public EvenementLocal participerEvenementLocal(Long eventId, Long userId) {
+        Optional<EvenementLocal> eventOpt = evenementLocalRepository.findById(eventId);
+        Optional<Utilisateur> userOpt = utilisateurRepository.findById(userId);
+        if (eventOpt.isPresent() && userOpt.isPresent()) {
+            EvenementLocal evenement = eventOpt.get();
+            Utilisateur utilisateur = userOpt.get();
+            evenement.getParticipants().add(utilisateur);
+            utilisateur.getEvenementsParticipes().add(evenement);
+            evenementLocalRepository.save(evenement);
+            utilisateurRepository.save(utilisateur);
+            return evenement;
+        }
+        throw new RuntimeException("Événement ou utilisateur non trouvé");
+    }
+
+    public EvenementLocal quitterEvenementLocal(Long eventId, Long userId) {
+        Optional<EvenementLocal> eventOpt = evenementLocalRepository.findById(eventId);
+        Optional<Utilisateur> userOpt = utilisateurRepository.findById(userId);
+        if (eventOpt.isPresent() && userOpt.isPresent()) {
+            EvenementLocal evenement = eventOpt.get();
+            Utilisateur utilisateur = userOpt.get();
+            evenement.getParticipants().remove(utilisateur);
+            utilisateur.getEvenementsParticipes().remove(evenement);
+            evenementLocalRepository.save(evenement);
+            utilisateurRepository.save(utilisateur);
+            return evenement;
+        }
+        throw new RuntimeException("Événement ou utilisateur non trouvé");
+    }
+
+    public List<EvenementVirtuel> obtenirTousEvenementsVirtuels() {
+        return evenementVirtuelRepository.findAll();
+    }
+
+    public EvenementVirtuel creerEvenementVirtuel(EvenementVirtuel evenement) {
+        return evenementVirtuelRepository.save(evenement);
+    }
+
+    public EvenementVirtuel obtenirEvenementVirtuelParId(Long id) {
+        return evenementVirtuelRepository.findById(id).orElseThrow(() -> new RuntimeException("Événement virtuel non trouvé"));
     }
 
     public void supprimerEvenementVirtuel(Long id) {
-        repoEvenementVirtuel.deleteById(id);
-    }
-
-    public EvenementLocal participerEvenementLocal(Long idEvenement, Long idUtilisateur) {
-        EvenementLocal evenement = repoEvenementLocal.findById(idEvenement)
-                .orElseThrow(() -> new RuntimeException("Événement non trouvé"));
-        Utilisateur utilisateur = repoUtilisateur.findById(idUtilisateur)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-        evenement.getParticipants().add(utilisateur);
-        return repoEvenementLocal.save(evenement);
-    }
-
-    public EvenementLocal quitterEvenementLocal(Long idEvenement, Long idUtilisateur) {
-        EvenementLocal evenement = repoEvenementLocal.findById(idEvenement)
-                .orElseThrow(() -> new RuntimeException("Événement non trouvé"));
-        Utilisateur utilisateur = repoUtilisateur.findById(idUtilisateur)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-        evenement.getParticipants().remove(utilisateur);
-        return repoEvenementLocal.save(evenement);
-    }
-
-    public List<Utilisateur> obtenirParticipantsEvenementLocal(Long idEvenement) {
-        EvenementLocal evenement = repoEvenementLocal.findById(idEvenement)
-                .orElseThrow(() -> new RuntimeException("Événement non trouvé"));
-        return evenement.getParticipants();
+        evenementVirtuelRepository.deleteById(id);
     }
 }
