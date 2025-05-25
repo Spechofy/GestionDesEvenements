@@ -1,0 +1,72 @@
+name: CI - Gestion des evenements (Develop & Feature)
+
+on:
+  push:
+    branches:
+      - develop
+      - 'feature/*'
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  lint:
+    name: Lint Checkstyle
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Run Maven lint (Checkstyle)
+        run: mvn checkstyle:check
+
+  test:
+    name: Build and Test with PostgreSQL
+    runs-on: ubuntu-latest
+    needs: lint
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: Events-db
+          POSTGRES_USER: dahia
+          POSTGRES_PASSWORD: dahia
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U dahia"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Wait for Postgres
+        run: |
+          echo "Waiting for Postgres..."
+          until pg_isready -h localhost -p 5432 -U dahia; do sleep 5; done
+
+      - name: Run Maven tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/Events-db
+          SPRING_DATASOURCE_USERNAME: dahia
+          SPRING_DATASOURCE_PASSWORD: dahia
+        run: mvn test -B
