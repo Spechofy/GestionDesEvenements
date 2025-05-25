@@ -11,5 +11,4 @@ import java.util.Optional;
 public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> {
     Optional<Utilisateur> findByCourriel(String courriel);
 
-    List<Utilisateur> findByEvenementsParticipes_Identifiant(Long idEvenement);
 }

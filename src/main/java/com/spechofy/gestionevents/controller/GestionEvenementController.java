@@ -55,7 +55,7 @@ public class GestionEvenementController {
             @RequestParam double longitude) {
         List<EvenementLocal> proches = serviceEvenement.obtenirTousEvenementsLocaux().stream()
                 .filter(e -> e.getLatitude() != null && e.getLongitude() != null)
-                .filter(e -> serviceGeo.distanceEnKm(latitude, longitude, e.getLatitude(), e.getLongitude()) <= 5)
+                .filter(e -> serviceGeo.distanceEnKm(latitude, longitude, e.getLatitude(), e.getLongitude()) <= 10)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(proches);
     }
@@ -67,14 +67,18 @@ public class GestionEvenementController {
         List<EvenementLocal> suggerees = serviceEvenement.obtenirTousEvenementsLocaux().stream()
                 .filter(e -> e.getLatitude() != null && e.getLongitude() != null)
                 .sorted(Comparator.comparingDouble(e -> serviceGeo.distanceEnKm(latitude, longitude, e.getLatitude(), e.getLongitude())))
-                .limit(3)
+                .limit(2)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(suggerees);
     }
 
-    @PostMapping(path = "/locaux", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(
+            path = "/locaux"
+
+    )
     public ResponseEntity<?> creerEvenementLocal(@RequestBody EvenementLocal evenement) {
         logger.info("Création événement local: {}", evenement);
+
         try {
             // Valider créateur
             if (evenement.getCreateur() == null || evenement.getCreateur().getIdentifiant() == null) {
@@ -82,22 +86,27 @@ public class GestionEvenementController {
             }
             var optUser = utilisateurService.obtenirUtilisateurParId(evenement.getCreateur().getIdentifiant());
             if (optUser.isEmpty()) {
-                return ResponseEntity.badRequest().body(" Créateur introuvable.");
+                return ResponseEntity.badRequest().body("Créateur introuvable.");
             }
             evenement.setCreateur(optUser.get());
+
             // Géolocalisation
             double[] coords = serviceGeo.obtenirCoordonneesDepuisAdresse(evenement.getLieu());
             evenement.setLatitude(coords[0]);
             evenement.setLongitude(coords[1]);
+
+            // Persistance
             var saved = serviceEvenement.creerEvenementLocal(evenement);
             return ResponseEntity.ok(saved);
+
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("❌ Validation: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Validation: " + e.getMessage());
         } catch (RuntimeException e) {
             logger.error("Erreur création: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("❌ " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("X " + e.getMessage());
         }
     }
+
 
     @PostMapping(path = "/locaux/{eventId}/participer", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> participerEvenementLocal(@PathVariable Long eventId,
@@ -110,14 +119,14 @@ public class GestionEvenementController {
 
             Optional<Utilisateur> utilisateurOpt = utilisateurService.obtenirUtilisateurParId(userId);
             if (utilisateurOpt.isEmpty()) {
-                return ResponseEntity.badRequest().body("❌ Utilisateur non trouvé.");
+                return ResponseEntity.badRequest().body("Utilisateur non trouvé.");
             }
 
             Utilisateur utilisateur = utilisateurOpt.get();
 
             // Vérifier si l'utilisateur est déjà dans la liste des participants
             if (evenement.getParticipants().contains(utilisateur)) {
-                return ResponseEntity.badRequest().body("❌ L'utilisateur participe déjà à cet événement.");
+                return ResponseEntity.badRequest().body(" L'utilisateur participe déjà à cet événement.");
             }
 
             // Ajouter l'utilisateur à l'événement
@@ -154,6 +163,11 @@ public class GestionEvenementController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+    @PostMapping(path = "/kafka-participation", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> ParticipationUtilisateur(@RequestBody UtilisateurParticipeEvenement evenement) {
+        serviceKafka.envoyerEvenementUtilisateurParticipe(evenement);
+        return ResponseEntity.ok(" push sur kafka : " + evenement);
     }
 
     @GetMapping(path = "/virtuels", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -206,9 +220,5 @@ public class GestionEvenementController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(path = "/simuler-participation", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> ParticipationUtilisateur(@RequestBody UtilisateurParticipeEvenement evenement) {
-        serviceKafka.envoyerEvenementUtilisateurParticipe(evenement);
-        return ResponseEntity.ok(" push sur kafka : " + evenement);
-    }
+
 }

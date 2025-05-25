@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface EvenementVirtuelRepository extends JpaRepository<EvenementVirtuel, Long> {
-    List<EvenementVirtuel> findByCreateurIdentifiant(Long identifiant); // Corrected from findByCreateurId
+
 }

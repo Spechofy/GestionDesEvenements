@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/utilisateurs").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/evenements").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/evenements").permitAll()
-                        .requestMatchers("/api/evenements/simuler-participation").permitAll()
+                        .requestMatchers("/api/evenements/kafka-participation").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/evenements/locaux").permitAll()
                         .requestMatchers("/api/evenements/**").permitAll()
 
@@ -77,7 +77,7 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-        System.out.println("🚀 CORS configuré pour : " + configuration.getAllowedOrigins());
+        System.out.println(" CORS configuré pour : " + configuration.getAllowedOrigins());
         return source;
     }
 
